@@ -1,5 +1,6 @@
 Cheetah==2.4.4
 Flask==0.12.2
+Flask-Mail==0.9.1
 Flask-Migrate==2.1.1
 Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.3.2
@@ -22,6 +23,7 @@ aniso8601==2.0.0
 apt-xapian-index==0.45
 argparse==1.2.1
 billiard==3.5.0.3
+blinker==1.4
 celery==4.1.0
 chardet==2.0.1
 click==6.7
