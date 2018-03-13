@@ -7,16 +7,16 @@ from ...models.network.flush_cache import AkamaiFlushCache, AkamaiFlushCacheSche
 from .. import api
 import json, uuid, time
 from .. import status
-from rq import Queue, Connection
-import redis
+from ...utils.async import ManageJobs
 from ...scripts.akamai.manage_cache import manage_cache
+
 
 request_schema = RequestSchema(only=('request_number', 'creation_date','jobid','status','result'))
 akamai_flush_schema = AkamaiFlushCacheSchema()
 email_schema = RequestorEmailsSchema()
 test_schema = AkamaiFlushSchema()
 
-class AkamaiFlushCacheResource(Resource):
+class AkamaiFlushCacheListResource(Resource):
     def get(self):
         requests = Requests.query.filter_by(category='FlushCache').all()
         result = request_schema.dump(requests,many=True)
@@ -37,19 +37,27 @@ class AkamaiFlushCacheResource(Resource):
             new_request.import_data(request_data)
             new_request.akamaiflushcache = cpcodes
             new_request.emails = emails
-            with Connection(redis.from_url(current_app.config['REDIS_URL'])):
-                q = Queue()
-                job = q.enqueue(manage_cache,"Test",result_ttl=86400)
-                new_request.jobid = job.id
+            new_job = ManageJobs(manage_cache,['25000'])
+            job = new_job.queue()
+            new_request.jobid = job.id
+            new_request.status = job.status
             db.session.add(new_request)
             db.session.commit()
-            #return status.HTTP_202_ACCEPTED, job.id
             return jsonify({'status': status.HTTP_202_ACCEPTED,
-                    'jobid': job.id,
-                    'result': url_for('api.resultsresource', id=job.id, _external=True, _scheme='https')
+                    'job_status': job.status,
+                    'job_id': job.id,
+                    'result': url_for('api.resultsresource', id=job.id, _external=True),
+                    'request': url_for('api.akamaiflushcacheresource', request_number=new_request.request_number, _external=True),
                     })
         except (SQLAlchemyError,IntegrityError) as error:
             response = {'error': error[0]}
             return response
 
-api.add_resource(AkamaiFlushCacheResource, '/v1/requests/flushcache/')
+class AkamaiFlushCacheResource(Resource):
+    def get(self,request_number):
+        requests = Requests.query.filter_by(request_number=request_number).first_or_404()
+        result = request_schema.dump(requests)
+        return result
+
+api.add_resource(AkamaiFlushCacheListResource, '/v1/requests/flushcache/')
+api.add_resource(AkamaiFlushCacheResource, '/v1/requests/flushcache/<string:request_number>')

@@ -2,3 +2,6 @@ notes
 bin/
 lib/
 local/
+db/
+*.pyc
+app/*.pyc

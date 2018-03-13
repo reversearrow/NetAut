@@ -23,7 +23,6 @@ class Requests(db.Model):
             self.request_number = data['request']['request_number']
             self.category = data['request']['category']
             self.uuidv4 = uuid.uuid4().hex
-            self.status = "Submitted"
         except:
             return "Exception"
         return self
@@ -52,7 +51,7 @@ class RequestSchema(ma.Schema):
     category = fields.String(required=True)
     status = fields.String()
     emails = fields.Nested(RequestorEmailsSchema,many=True,exclude=('request_id'))
-    result = ma.URLFor('api.resultsresource', id='<jobid>', _external=True, _scheme='https')
+    result = ma.URLFor('api.resultsresource', id='<jobid>', _external=True, _scheme='http')
 
     @validates('category')
     def validate_category(self,category):
