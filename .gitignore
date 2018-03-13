@@ -5,3 +5,4 @@ local/
 db/
 *.pyc
 app/*.pyc
+old_files/

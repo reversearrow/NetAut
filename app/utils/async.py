@@ -9,7 +9,7 @@ from ..models.requests import Requests
 class ManageJobs:
     accepted_statues = ['finished','failed']
 
-    def __init__(self,func,args):
+    def __init__(self,func=None,args=None):
         self.func = func
         self.args = args
         self.result_ttl = 86000
@@ -21,8 +21,8 @@ class ManageJobs:
             monitor = q.enqueue_call(func=self.monitor,args=(job.id,),result_ttl=self.result_ttl,depends_on=job.id)
             return job
 
-    def monitor(self,jobid):
-        job = Job.fetch(jobid)
+    def monitor(self,id):
+        job = Job.fetch(id)
         while job.status not in self.accepted_statues:
             time.sleep(1)
         else:
@@ -30,3 +30,8 @@ class ManageJobs:
             request.status = job.status
             db.session.add(request)
             db.session.commit()
+
+    def get_job(self,id):
+        with Connection(redis.from_url(current_app.config['REDIS_URL'])):
+            job = Job.fetch(id)
+            return job
