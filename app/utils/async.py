@@ -8,7 +8,7 @@ from ..models.requests import Requests
 
 class ManageJobs:
     accepted_statues = ['finished','failed']
-
+    
     def __init__(self,func=None,args=None):
         self.func = func
         self.args = args

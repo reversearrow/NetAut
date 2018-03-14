@@ -16,7 +16,7 @@ class Requests(db.Model):
     category = db.Column(db.String(30),nullable=False)
     status = db.Column(db.String(30),nullable=False)
     uuidv4 = db.Column(db.String(64),nullable=False,primary_key=True)
-    jobid = db.Column(db.String(64))
+    jobid = db.Column(db.String(64),nullable=False)
 
     def import_data(self,data):
         try:
@@ -46,10 +46,11 @@ class RequestorEmailsSchema(ma.Schema):
 
 class RequestSchema(ma.Schema):
     request_number = fields.String(required=True, validate=validate.Length(5))
-    notify = fields.List(fields.Email(required=True),required=True)
+    notify = fields.List(fields.Email(),required=True)
     creation_date = fields.DateTime()
     category = fields.String(required=True)
     status = fields.String()
+    jobid = fields.String()
     emails = fields.Nested(RequestorEmailsSchema,many=True,exclude=('request_id'))
     result = ma.URLFor('api.resultsresource', id='<jobid>', _external=True, _scheme='http')
 
@@ -58,5 +59,8 @@ class RequestSchema(ma.Schema):
         categories = ["FlushCache","IPBlacklist","IPWhitelist"]
         if category not in categories:
             raise ValidationError("Invalid Category")
-    #url = ma.AbsoluteURLFor('api.requestlistresource', c='<category>', id='<request_number>', _scheme='https', _external=True)
-    #akamaiflushcache = fields.Nested(AkamaiFlushCacheSchema,many=True)
+
+    @validates('notify')
+    def validate_emails(self,notify):
+        if notify == []:
+            raise ValidationError("Please enter email to notify.")

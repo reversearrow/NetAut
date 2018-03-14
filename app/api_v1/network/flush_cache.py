@@ -3,7 +3,7 @@ from flask_restful import  Resource
 from sqlalchemy.exc import SQLAlchemyError,IntegrityError
 from ...models import db
 from ...models.requests import Requests, RequestSchema, RequestorEmails,RequestorEmailsSchema
-from ...models.network.flush_cache import AkamaiFlushCache, AkamaiFlushCacheSchema, AkamaiFlushSchema
+from ...models.network.flush_cache import AkamaiFlushCache, AkamaiFlushCacheSchema
 from .. import api
 import json, uuid, time
 from .. import status
@@ -14,7 +14,6 @@ from ...scripts.akamai.manage_cache import manage_cache
 request_schema = RequestSchema(only=('request_number', 'creation_date','jobid','status','result'))
 akamai_flush_schema = AkamaiFlushCacheSchema()
 email_schema = RequestorEmailsSchema()
-test_schema = AkamaiFlushSchema()
 
 class AkamaiFlushCacheListResource(Resource):
     def get(self):
@@ -37,8 +36,8 @@ class AkamaiFlushCacheListResource(Resource):
             new_request.import_data(request_data)
             new_request.akamaiflushcache = cpcodes
             new_request.emails = emails
-            new_job = ManageJobs(manage_cache,['25000'])
-            job = new_job.queue()
+            manage_jobs = ManageJobs(manage_cache,['25000'])
+            job = manage_jobs.queue()
             new_request.jobid = job.id
             new_request.status = job.status
             db.session.add(new_request)

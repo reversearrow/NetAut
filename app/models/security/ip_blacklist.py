@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from marshmallow import validate, post_dump, ValidationError, validates
+from marshmallow import ValidationError, validates, validate
 from .. import db, ma
 from ..requests import RequestSchema
 
@@ -13,4 +13,9 @@ class BlockedIPAddresses(db.Model):
 class BlockIPAddressSchema(ma.Schema):
     request = fields.Nested(RequestSchema,required=True)
     ip_address = fields.String()
-    ip_addresses = fields.List(fields.String(required=True),required=True)
+    ip_addresses = fields.List(fields.String(validate=validate.Regexp('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')),required=True)
+
+    @validates('ip_addresses')
+    def validate_ip_addresses(self,ip_addresses):
+        if ip_addresses == []:
+            raise ValidationError("The list is empty.")

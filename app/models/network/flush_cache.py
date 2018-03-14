@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validates, ValidationError
 from .. import db, ma
 from ..requests import RequestSchema
 
@@ -12,14 +12,10 @@ class AkamaiFlushCache(db.Model):
 
 class AkamaiFlushCacheSchema(ma.Schema):
     request = fields.Nested(RequestSchema,required=True)
-    cpcodes = fields.List(fields.String(required=True),required=True)
+    cpcodes = fields.List(fields.String(),required=True)
     cpcode = fields.String()
 
-class AkamaiFlushSchema(ma.Schema):
-    request = fields.Nested(RequestSchema)
-    akamaiflushcache = fields.Nested(AkamaiFlushCacheSchema,many=True)
-    #cpcode = fields.String()
-    # links = ma.Hyperlinks({
-    #     'self': ma.URLFor('api.akamaiflushcacheresource', request='<request_number>', _scheme='https', _external=True),
-    #     'collection': ma.URLFor('api.akamaiflushcacheresource', _scheme='https', _external=True),
-    # })
+    @validates('cpcodes')
+    def validate_cpcodes(self,cpcodes):
+        if cpcodes == []:
+            raise ValidationError("The list is empty.")

@@ -6,10 +6,10 @@ api = Api(api_bp)
 
 from sqlalchemy.exc import SQLAlchemyError,IntegrityError
 from sqlalchemy.orm import joinedload
-import status, json, uuid, time
+import status, json, uuid, time, requests
 from rq import Queue
 from redis import Redis
 from rq.decorators import job
-from . import categories, requests, results
+from . import results
 from network import flush_cache
 from security import ip_blacklist

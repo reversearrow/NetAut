@@ -8,6 +8,6 @@ PORT = 5000
 HOST = "0.0.0.0"
 REDIS_URL = 'redis://localhost:6379/0'
 QUEUES = ['default']
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db_path
