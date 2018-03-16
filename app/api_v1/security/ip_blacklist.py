@@ -18,8 +18,6 @@ class IPBlackList(Resource):
     def get(self):
         requests = Requests.query.filter_by(category='IPBlacklist').all()
         result = request_schema.dump(requests,many=True)
-        #requests = BlockedIPAddresses.query.all()
-        # result = block_ipaddress_schema.dump(requests,many=True)
         return result
 
     def post(self):

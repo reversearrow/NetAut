@@ -10,6 +10,6 @@ import status, json, uuid, time, requests
 from rq import Queue
 from redis import Redis
 from rq.decorators import job
-from . import results
+from . import results, users
 from network import flush_cache
 from security import ip_blacklist

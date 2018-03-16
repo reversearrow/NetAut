@@ -38,6 +38,15 @@ class RequestorEmails(db.Model):
     def __init__(self,email):
         self.email = email
 
+class Emails(db.Model):
+    __tablename__ = 'emails'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(80), nullable=False, unique=True)
+
+    def __init__(self,email):
+        self.email = email
+
 class RequestorEmailsSchema(ma.Schema):
     request_number = fields.String(required=True)
     email = fields.String(required=True)
