@@ -5,6 +5,7 @@ from app.auth import auth
 
 app = create_app('dev')
 
+#Authentication required before any request.
 @app.before_request
 @auth.login_required
 def before_request():

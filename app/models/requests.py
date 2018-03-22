@@ -6,8 +6,6 @@ from . import db, ma
 import datetime
 import uuid
 
-
-
 class Requests(db.Model):
     __tablename__ = 'requests'
 
@@ -32,7 +30,7 @@ class RequestorEmails(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(40), nullable=False)
-    request_id = db.Column(db.Integer, db.ForeignKey('requests.uuidv4'), nullable=False)
+    request_id = db.Column(db.String, db.ForeignKey('requests.uuidv4'), nullable=False)
     request = db.relationship('Requests', backref='emails', lazy=True)
 
     def __init__(self,email):
