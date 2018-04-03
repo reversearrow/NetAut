@@ -7,7 +7,7 @@ class AkamaiFlushCache(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     #Todo: All CPCODES must be stored in different table and needs to be referenced here only.
     cpcode = db.Column(db.String(45), nullable=False)
-    request_id = db.Column(db.Integer, db.ForeignKey('requests.uuidv4'), nullable=False)
+    request_id = db.Column(db.String, db.ForeignKey('requests.uuidv4'), nullable=False)
     request = db.relationship('Requests', backref='akamaiflushcache', lazy=True)
 
 class AkamaiFlushCacheSchema(ma.Schema):
