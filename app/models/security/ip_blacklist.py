@@ -7,7 +7,7 @@ class BlockedIPAddresses(db.Model):
     __tablename__ = 'blocked_ip_addresses'
     id = db.Column(db.Integer, primary_key=True)
     ip_address = db.Column(db.String(16),nullable=False,unique=True)
-    request_id = db.Column(db.Integer, db.ForeignKey('requests.uuidv4'), nullable=False)
+    request_id = db.Column(db.String, db.ForeignKey('requests.uuidv4'), nullable=False)
     request = db.relationship('Requests', backref='blockedipaddresses', lazy=True)
 
 class BlockIPAddressSchema(ma.Schema):
