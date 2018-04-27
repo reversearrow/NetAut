@@ -5,6 +5,7 @@ import redis
 
 manager = Manager(app)
 
+
 @manager.command
 def run_worker():
     redis_url = app.config['REDIS_URL']
@@ -12,6 +13,7 @@ def run_worker():
     with Connection(redis_connection):
         worker = Worker(app.config['QUEUES'])
         worker.work()
+
 
 if __name__ == "__main__":
     manager.run()

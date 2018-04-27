@@ -4,6 +4,7 @@ from models.users import Users
 
 auth = HTTPBasicAuth()
 
+
 @auth.verify_password
 def verify_user_password(username, password):
     if username and password:
@@ -12,12 +13,13 @@ def verify_user_password(username, password):
             return False
         return g.user.verify_password(password)
 
+
 @auth.error_handler
 def unauthorized():
     response = jsonify({
-            'status': 401,
-            'error': 'unauthorized',
-            'message': 'Please Authenticate'
-        })
+        'status': 401,
+        'error': 'unauthorized',
+        'message': 'Please Authenticate'
+    })
     response.status_code = 401
     return response
